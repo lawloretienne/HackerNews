@@ -1,0 +1,115 @@
+package com.etiennelawlor.hackernews.network;
+
+import com.etiennelawlor.hackernews.HackerNewsApplication;
+import com.squareup.okhttp.Cache;
+import com.squareup.okhttp.OkHttpClient;
+
+import java.io.File;
+import java.io.IOException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+import java.util.concurrent.ConcurrentHashMap;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
+import retrofit.Endpoint;
+import retrofit.Endpoints;
+import retrofit.RestAdapter;
+import retrofit.client.Client;
+import retrofit.client.OkClient;
+import timber.log.Timber;
+
+/**
+ * Created by etiennelawlor on 3/21/15.
+ */
+public final class Api {
+
+    // region Member Variables
+
+    private static final int DISK_CACHE_SIZE = 50 * 1024 * 1024; // 50MB
+    private static final ConcurrentHashMap<EndpointUrl, Service> sServices = new ConcurrentHashMap<EndpointUrl, Service>();
+
+    private final String mUrl;
+    // endregion
+
+    // region Constructors
+    private Api(EndpointUrl url) {
+        mUrl = url.toString();
+    }
+    // endregion
+
+    private Endpoint getEndpoint() {
+        return Endpoints.newFixedEndpoint(mUrl);
+    }
+
+    private RestAdapter getRestAdapter() {
+        return new RestAdapter.Builder()
+                .setEndpoint(getEndpoint())
+                .setClient(getClient())
+                .setLogLevel(RestAdapter.LogLevel.FULL)
+//                .setLog(getLog())
+                .build();
+
+    }
+
+    private Client getClient() {
+        OkHttpClient client = new OkHttpClient();
+
+        // Install an HTTP cache in the application cache directory.
+        try {
+            File cacheDir = new File(HackerNewsApplication.getCacheDirectory(), "http");
+            Cache cache = new Cache(cacheDir, DISK_CACHE_SIZE);
+            client.setCache(cache);
+        } catch (IOException e) {
+            Timber.e(e, "Unable to install disk cache.");
+        }
+        client.setSslSocketFactory(createBadSslSocketFactory());
+
+        return new OkClient(client);
+    }
+
+    public static Service getService(EndpointUrl endpointUrl) {
+        if (sServices.containsKey(endpointUrl)) {
+            return sServices.get(endpointUrl);
+        } else {
+            Service service = (new Api(endpointUrl))
+                    .getRestAdapter()
+                    .create(Service.class);
+
+            sServices.putIfAbsent(endpointUrl, service);
+
+            return service;
+        }
+    }
+
+    public static EndpointUrl getEndpointUrl(){
+        return EndpointUrl.PRODUCTION;
+    }
+
+    private SSLSocketFactory createBadSslSocketFactory() {
+        try {
+            // Construct SSLSocketFactory that accepts any cert.
+            SSLContext context = SSLContext.getInstance("TLS");
+            TrustManager permissive = new X509TrustManager() {
+                @Override public void checkClientTrusted(X509Certificate[] chain, String authType)
+                        throws CertificateException {
+                }
+
+                @Override public void checkServerTrusted(X509Certificate[] chain, String authType)
+                        throws CertificateException {
+                }
+
+                @Override public X509Certificate[] getAcceptedIssuers() {
+                    return null;
+                }
+            };
+            context.init(null, new TrustManager[] { permissive }, null);
+            return context.getSocketFactory();
+        } catch (Exception e) {
+            throw new AssertionError(e);
+        }
+    }
+}
