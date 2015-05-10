@@ -121,6 +121,17 @@ public class TopStoriesRecyclerViewAdapter extends RecyclerView.Adapter<Recycler
         notifyItemInserted(position);
     }
 
+    public void clear(){
+        while(getItemCount() > 0){
+            remove(0);
+        }
+    }
+
+    public void remove(int position) {
+        mTopStories.remove(position);
+        notifyItemRemoved(position);
+    }
+
     public TopStory getItem(int position){
         return mTopStories.get(position);
     }

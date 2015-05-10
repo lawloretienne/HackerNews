@@ -2,6 +2,7 @@ package com.etiennelawlor.hackernews.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -35,9 +36,24 @@ public class TopStoriesActivityFragment extends Fragment {
     // region Member Variables
     private LinearLayoutManager mLayoutManager;
     private TopStoriesRecyclerViewAdapter mTopStoriesRecyclerViewAdapter;
+    private boolean mIsRefreshing = false;
+    private long mStoryIdCount = 0;
 
     @InjectView(R.id.top_stories_rv) RecyclerView mTopStoriesRecyclerView;
+    @InjectView(R.id.swipe_refresh_layout) SwipeRefreshLayout mSwipeRefreshLayout;
     @InjectView(R.id.pb) ProgressBar mProgressBar;
+    // endregion
+
+    // region Listeners
+    private SwipeRefreshLayout.OnRefreshListener mSwipeRefreshLayoutOnRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
+        @Override
+        public void onRefresh() {
+            mIsRefreshing = true;
+            mTopStoriesRecyclerViewAdapter.clear();
+            // Refresh items
+            reloadTopStories();
+        }
+    };
     // endregion
 
     // region Callbacks
@@ -74,11 +90,69 @@ public class TopStoriesActivityFragment extends Fragment {
         mTopStoriesRecyclerViewAdapter = new TopStoriesRecyclerViewAdapter(getActivity());
 
         mTopStoriesRecyclerView.setAdapter(mTopStoriesRecyclerViewAdapter);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.primary, R.color.primary_dark);
 
+        mSwipeRefreshLayout.setOnRefreshListener(mSwipeRefreshLayoutOnRefreshListener);
+
+        loadTopStories();
+    }
+
+    @Override
+    public void onDestroyView () {
+        super.onDestroyView();
+        ButterKnife.reset(this);
+    }
+    // endregion
+
+    // region Helper Methods
+    private void loadTopStories(){
         Api.getService(Api.getEndpointUrl()).getTopStoryIds()
                 .concatMap(new Func1<List<Long>, Observable<?>>() {
                     @Override
                     public Observable<?> call(List<Long> storyIds) {
+                        mStoryIdCount = storyIds.size();
+
+                        return Observable.from(storyIds);
+                    }
+                })
+                .concatMap(new Func1<Object, Observable<TopStory>>() {
+                    @Override
+                    public Observable<TopStory> call(Object o) {
+                        Long storyId = (Long)o;
+                        return Api.getService(Api.getEndpointUrl()).getTopStory(storyId);
+                    }
+                })
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<TopStory>() {
+                    @Override
+                    public void call(TopStory topStory) {
+                        if(!mIsRefreshing && topStory != null){
+                            Timber.d("getTopStory : success()");
+                            mProgressBar.setVisibility(View.GONE);
+                            mTopStoriesRecyclerViewAdapter.add(mTopStoriesRecyclerViewAdapter.getItemCount(), topStory);
+
+                            if(mTopStoriesRecyclerViewAdapter.getItemCount() == mStoryIdCount){
+                                mSwipeRefreshLayout.setRefreshing(false);
+                                mIsRefreshing = false;
+                            }
+                        }
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        Timber.d("getTopStory : failure()");
+                    }
+                });
+    }
+
+    private void reloadTopStories(){
+        Api.getService(Api.getEndpointUrl()).getTopStoryIds()
+                .concatMap(new Func1<List<Long>, Observable<?>>() {
+                    @Override
+                    public Observable<?> call(List<Long> storyIds) {
+                        mStoryIdCount = storyIds.size();
+
                         return Observable.from(storyIds);
                     }
                 })
@@ -98,6 +172,11 @@ public class TopStoriesActivityFragment extends Fragment {
                             Timber.d("getTopStory : success()");
                             mProgressBar.setVisibility(View.GONE);
                             mTopStoriesRecyclerViewAdapter.add(mTopStoriesRecyclerViewAdapter.getItemCount(), topStory);
+
+                            if(mTopStoriesRecyclerViewAdapter.getItemCount() == mStoryIdCount){
+                                mSwipeRefreshLayout.setRefreshing(false);
+                                mIsRefreshing = false;
+                            }
                         }
                     }
                 }, new Action1<Throwable>() {
@@ -106,12 +185,6 @@ public class TopStoriesActivityFragment extends Fragment {
                         Timber.d("getTopStory : failure()");
                     }
                 });
-    }
-
-    @Override
-    public void onDestroyView () {
-        super.onDestroyView();
-        ButterKnife.reset(this);
     }
     // endregion
 }
