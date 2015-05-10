@@ -1,16 +1,19 @@
 package com.etiennelawlor.hackernews.network;
 
 public enum EndpointUrl {
+
     PRODUCTION ("https://hacker-news.firebaseio.com/v0");
 
-    public final String value;
+    // region Member Variables
+    public final String mValue;
+    // endregion
 
-    private EndpointUrl(String value) {
-        this.value = value;
+    EndpointUrl(String value) {
+        this.mValue = value;
     }
 
     @Override
     public String toString() {
-        return value;
+        return mValue;
     }
 }

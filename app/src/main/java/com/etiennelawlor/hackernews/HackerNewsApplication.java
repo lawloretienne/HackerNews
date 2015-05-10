@@ -1,6 +1,10 @@
 package com.etiennelawlor.hackernews;
 
 import android.app.Application;
+import android.content.Context;
+import android.util.Log;
+
+import com.squareup.leakcanary.RefWatcher;
 
 import java.io.File;
 
@@ -11,8 +15,12 @@ import timber.log.Timber;
  */
 public class HackerNewsApplication extends Application {
 
-    // region Member Variables
+    // region Static Variables
     private static HackerNewsApplication sCurrentApplication = null;
+    // endregion
+
+    // region Member Variables
+    private RefWatcher mRefWatcher;
     // endregion
 
     @Override
@@ -26,36 +34,44 @@ public class HackerNewsApplication extends Application {
         }
 
         sCurrentApplication = this;
-
     }
 
+    // region Helper Methods
     public static HackerNewsApplication get() {
         return sCurrentApplication;
     }
-
 
     public static File getCacheDirectory()  {
         return sCurrentApplication.getCacheDir();
     }
 
+    public static RefWatcher getRefWatcher(Context context) {
+        HackerNewsApplication application = (HackerNewsApplication) context.getApplicationContext();
+        return application.mRefWatcher;
+    }
+    // endregion
+
+    // region Inner Classes
+
     /** A tree which logs important information for crash reporting. */
-    private static class CrashReportingTree extends Timber.HollowTree {
+    private static class CrashReportingTree extends Timber.Tree {
         @Override
-        public void i(String message, Object... args) {
-//            Crashlytics.log(String.format(message, args));
-        }
+        protected void log(int priority, String tag, String message, Throwable t) {
+            if (priority == Log.VERBOSE || priority == Log.DEBUG) {
+                return;
+            }
 
-        @Override public void i(Throwable t, String message, Object... args) {
-            i(message, args); // Just add to the log.
-        }
-
-        @Override public void e(String message, Object... args) {
-            i("ERROR: " + message, args); // Just add to the log.
-        }
-
-        @Override public void e(Throwable t, String message, Object... args) {
-            e(message, args);
-//            Crashlytics.logException(t);
+//            FakeCrashLibrary.log(priority, tag, message);
+//
+//            if (t != null) {
+//                if (priority == Log.ERROR) {
+//                    FakeCrashLibrary.logError(t);
+//                } else if (priority == Log.WARN) {
+//                    FakeCrashLibrary.logWarning(t);
+//                }
+//            }
         }
     }
+
+    // endregion
 }

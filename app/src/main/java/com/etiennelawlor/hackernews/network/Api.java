@@ -27,11 +27,12 @@ import timber.log.Timber;
  */
 public final class Api {
 
-    // region Member Variables
-
+    // region Constants
     private static final int DISK_CACHE_SIZE = 50 * 1024 * 1024; // 50MB
     private static final ConcurrentHashMap<EndpointUrl, Service> sServices = new ConcurrentHashMap<EndpointUrl, Service>();
+    // endregion
 
+    // region Member Variables
     private final String mUrl;
     // endregion
 
@@ -41,6 +42,7 @@ public final class Api {
     }
     // endregion
 
+    // region Helper Methods
     private Endpoint getEndpoint() {
         return Endpoints.newFixedEndpoint(mUrl);
     }
@@ -63,30 +65,12 @@ public final class Api {
             File cacheDir = new File(HackerNewsApplication.getCacheDirectory(), "http");
             Cache cache = new Cache(cacheDir, DISK_CACHE_SIZE);
             client.setCache(cache);
-        } catch (IOException e) {
+        } catch (Exception e) {
             Timber.e(e, "Unable to install disk cache.");
         }
         client.setSslSocketFactory(createBadSslSocketFactory());
 
         return new OkClient(client);
-    }
-
-    public static Service getService(EndpointUrl endpointUrl) {
-        if (sServices.containsKey(endpointUrl)) {
-            return sServices.get(endpointUrl);
-        } else {
-            Service service = (new Api(endpointUrl))
-                    .getRestAdapter()
-                    .create(Service.class);
-
-            sServices.putIfAbsent(endpointUrl, service);
-
-            return service;
-        }
-    }
-
-    public static EndpointUrl getEndpointUrl(){
-        return EndpointUrl.PRODUCTION;
     }
 
     private SSLSocketFactory createBadSslSocketFactory() {
@@ -111,5 +95,24 @@ public final class Api {
         } catch (Exception e) {
             throw new AssertionError(e);
         }
+    }
+    // endregion
+
+    public static Service getService(EndpointUrl endpointUrl) {
+        if (sServices.containsKey(endpointUrl)) {
+            return sServices.get(endpointUrl);
+        } else {
+            Service service = (new Api(endpointUrl))
+                    .getRestAdapter()
+                    .create(Service.class);
+
+            sServices.putIfAbsent(endpointUrl, service);
+
+            return service;
+        }
+    }
+
+    public static EndpointUrl getEndpointUrl(){
+        return EndpointUrl.PRODUCTION;
     }
 }

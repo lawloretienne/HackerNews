@@ -46,7 +46,6 @@ public class TopStoriesRecyclerViewAdapter extends RecyclerView.Adapter<Recycler
         TopStoryViewHolder vh = new TopStoryViewHolder(v);
 
         return vh;
-
     }
 
     @Override
@@ -68,11 +67,12 @@ public class TopStoriesRecyclerViewAdapter extends RecyclerView.Adapter<Recycler
 
     }
 
-
     @Override
     public int getItemCount() {
         return mTopStories.size();
     }
+
+    // region Helper Methods
 
     public void add(int position, TopStory item) {
         mTopStories.add(position, item);
@@ -82,9 +82,6 @@ public class TopStoriesRecyclerViewAdapter extends RecyclerView.Adapter<Recycler
     public TopStory getItem(int position){
         return mTopStories.get(position);
     }
-
-
-    // region Helper Methods
 
     // endregion
 

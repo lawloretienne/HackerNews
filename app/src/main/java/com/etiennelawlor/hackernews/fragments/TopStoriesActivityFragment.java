@@ -20,6 +20,11 @@ import butterknife.InjectView;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 
@@ -60,7 +65,30 @@ public class TopStoriesActivityFragment extends Fragment {
                     for(int i=0; i<5; i++){
                         long storyId = storyIds.get(i);
                         Api.getService(Api.getEndpointUrl()).getTopStory(storyId, mGetTopStoryCallback);
+
+//                        Api.getService(Api.getEndpointUrl())
+//                                .getTopStory(storyId)
+////                                .subscribeOn(Schedulers.io())
+//                                .observeOn(AndroidSchedulers.mainThread())
+//                                .flatMap()
+//                                .subscribe(new Action1<TopStory>() {
+//                                    @Override
+//                                    public void call(TopStory topStory) {
+//                                        if (topStory != null) {
+//                                            mTopStoriesRecyclerViewAdapter.add(mTopStoriesRecyclerViewAdapter.getItemCount(), topStory);
+//                                        }
+//                                    }
+//                                }, new Action1<Throwable>() {
+//                                    @Override
+//                                    public void call(Throwable throwable) {
+//                                        //todo: error handle this
+//                                        Timber.e(throwable, "HackerNews API Error");
+//                                    }
+//                                });
+
                     }
+
+
                 }
             }
         }
@@ -98,6 +126,13 @@ public class TopStoriesActivityFragment extends Fragment {
     // endregion
 
     // region Constructors
+    public static TopStoriesActivityFragment newInstance() {
+        TopStoriesActivityFragment fragment = new TopStoriesActivityFragment();
+        Bundle args = new Bundle();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     public TopStoriesActivityFragment() {
     }
     // endregion
@@ -123,6 +158,19 @@ public class TopStoriesActivityFragment extends Fragment {
         mTopStoriesRecyclerView.setAdapter(mTopStoriesRecyclerViewAdapter);
 
         Api.getService(Api.getEndpointUrl()).getTopStoryIds(mGetTopStoryIdsCallback);
+
+//        Api.getService(Api.getEndpointUrl()).getTopStoryIds()
+//                .flatMap(new Func1<List<Long>, Observable<Long>>() {
+//                    @Override
+//                    public Observable<Long> call(List<Long> storyIds) {
+//                        return Observable.from(storyIds);
+//                    }
+//                })
+//                .subscribe(
+//                        Api.getService(Api.getEndpointUrl()).getTopStory(storyId)
+//                );
+
+
     }
 
     @Override
