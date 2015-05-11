@@ -15,19 +15,14 @@ import com.etiennelawlor.hackernews.adapters.TopStoriesRecyclerViewAdapter;
 import com.etiennelawlor.hackernews.network.Api;
 import com.etiennelawlor.hackernews.network.models.TopStory;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
-import rx.functions.Func2;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
 

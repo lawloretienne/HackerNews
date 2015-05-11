@@ -5,7 +5,6 @@ import com.squareup.okhttp.Cache;
 import com.squareup.okhttp.OkHttpClient;
 
 import java.io.File;
-import java.io.IOException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.concurrent.ConcurrentHashMap;

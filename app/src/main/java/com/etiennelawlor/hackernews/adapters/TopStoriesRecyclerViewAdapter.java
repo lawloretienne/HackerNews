@@ -12,18 +12,15 @@ import android.text.style.RelativeSizeSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.etiennelawlor.hackernews.R;
 import com.etiennelawlor.hackernews.network.models.TopStory;
 import com.etiennelawlor.hackernews.utils.HackerNewsUtility;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
