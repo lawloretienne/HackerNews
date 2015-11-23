@@ -17,8 +17,8 @@ import com.etiennelawlor.hackernews.network.models.TopStory;
 
 import java.util.List;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -29,18 +29,20 @@ import timber.log.Timber;
 public class TopStoriesActivityFragment extends Fragment {
 
     // region Member Variables
-    private LinearLayoutManager mLayoutManager;
     private TopStoriesRecyclerViewAdapter mTopStoriesRecyclerViewAdapter;
     private boolean mIsRefreshing = false;
     private long mStoryIdCount = 0;
 
-    @InjectView(R.id.top_stories_rv) RecyclerView mTopStoriesRecyclerView;
-    @InjectView(R.id.swipe_refresh_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @InjectView(R.id.pb) ProgressBar mProgressBar;
+    @Bind(R.id.top_stories_rv)
+    RecyclerView mTopStoriesRecyclerView;
+    @Bind(R.id.swipe_refresh_layout)
+    SwipeRefreshLayout mSwipeRefreshLayout;
+    @Bind(R.id.pb)
+    ProgressBar mProgressBar;
     // endregion
 
     // region Listeners
-    private SwipeRefreshLayout.OnRefreshListener mSwipeRefreshLayoutOnRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
+    private final SwipeRefreshLayout.OnRefreshListener mSwipeRefreshLayoutOnRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
         @Override
         public void onRefresh() {
             mIsRefreshing = true;
@@ -51,18 +53,17 @@ public class TopStoriesActivityFragment extends Fragment {
     };
     // endregion
 
-    // region Callbacks
+    // region Constructors
+    public TopStoriesActivityFragment() {
+    }
     // endregion
 
-    // region Constructors
+    // region Factory Methods
     public static TopStoriesActivityFragment newInstance() {
         TopStoriesActivityFragment fragment = new TopStoriesActivityFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
-    }
-
-    public TopStoriesActivityFragment() {
     }
     // endregion
 
@@ -71,7 +72,7 @@ public class TopStoriesActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_top_stories, container, false);
-        ButterKnife.inject(this, view);
+        ButterKnife.bind(this, view);
 
         return view;
     }
@@ -80,9 +81,9 @@ public class TopStoriesActivityFragment extends Fragment {
     public void onViewCreated(View v, Bundle savedInstanceState) {
         super.onViewCreated(v, savedInstanceState);
 
-        mLayoutManager = new LinearLayoutManager(getActivity());
-        mTopStoriesRecyclerView.setLayoutManager(mLayoutManager);
-        mTopStoriesRecyclerViewAdapter = new TopStoriesRecyclerViewAdapter(getActivity());
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        mTopStoriesRecyclerView.setLayoutManager(layoutManager);
+        mTopStoriesRecyclerViewAdapter = new TopStoriesRecyclerViewAdapter();
 
         mTopStoriesRecyclerView.setAdapter(mTopStoriesRecyclerViewAdapter);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.primary, R.color.primary_dark);
@@ -93,14 +94,14 @@ public class TopStoriesActivityFragment extends Fragment {
     }
 
     @Override
-    public void onDestroyView () {
+    public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.reset(this);
+        ButterKnife.unbind(this);
     }
     // endregion
 
     // region Helper Methods
-    private void loadTopStories(){
+    private void loadTopStories() {
         Api.getService(Api.getEndpointUrl()).getTopStoryIds()
                 .concatMap(new Func1<List<Long>, Observable<?>>() {
                     @Override
@@ -113,7 +114,7 @@ public class TopStoriesActivityFragment extends Fragment {
                 .concatMap(new Func1<Object, Observable<TopStory>>() {
                     @Override
                     public Observable<TopStory> call(Object o) {
-                        Long storyId = (Long)o;
+                        Long storyId = (Long) o;
                         return Api.getService(Api.getEndpointUrl()).getTopStory(storyId);
                     }
                 })
@@ -122,12 +123,12 @@ public class TopStoriesActivityFragment extends Fragment {
                 .subscribe(new Action1<TopStory>() {
                     @Override
                     public void call(TopStory topStory) {
-                        if(!mIsRefreshing && topStory != null){
+                        if (!mIsRefreshing && topStory != null) {
                             Timber.d("getTopStory : success()");
                             mProgressBar.setVisibility(View.GONE);
                             mTopStoriesRecyclerViewAdapter.add(mTopStoriesRecyclerViewAdapter.getItemCount(), topStory);
 
-                            if(mTopStoriesRecyclerViewAdapter.getItemCount() == mStoryIdCount){
+                            if (mTopStoriesRecyclerViewAdapter.getItemCount() == mStoryIdCount) {
                                 mSwipeRefreshLayout.setRefreshing(false);
                                 mIsRefreshing = false;
                             }
@@ -141,7 +142,7 @@ public class TopStoriesActivityFragment extends Fragment {
                 });
     }
 
-    private void reloadTopStories(){
+    private void reloadTopStories() {
         Api.getService(Api.getEndpointUrl()).getTopStoryIds()
                 .concatMap(new Func1<List<Long>, Observable<?>>() {
                     @Override
@@ -154,7 +155,7 @@ public class TopStoriesActivityFragment extends Fragment {
                 .concatMap(new Func1<Object, Observable<TopStory>>() {
                     @Override
                     public Observable<TopStory> call(Object o) {
-                        Long storyId = (Long)o;
+                        Long storyId = (Long) o;
                         return Api.getService(Api.getEndpointUrl()).getTopStory(storyId);
                     }
                 })
@@ -163,12 +164,12 @@ public class TopStoriesActivityFragment extends Fragment {
                 .subscribe(new Action1<TopStory>() {
                     @Override
                     public void call(TopStory topStory) {
-                        if(topStory != null){
+                        if (topStory != null) {
                             Timber.d("getTopStory : success()");
                             mProgressBar.setVisibility(View.GONE);
                             mTopStoriesRecyclerViewAdapter.add(mTopStoriesRecyclerViewAdapter.getItemCount(), topStory);
 
-                            if(mTopStoriesRecyclerViewAdapter.getItemCount() == mStoryIdCount){
+                            if (mTopStoriesRecyclerViewAdapter.getItemCount() == mStoryIdCount) {
                                 mSwipeRefreshLayout.setRefreshing(false);
                                 mIsRefreshing = false;
                             }

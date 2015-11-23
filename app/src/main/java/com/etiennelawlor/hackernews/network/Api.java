@@ -28,7 +28,7 @@ public final class Api {
 
     // region Constants
     private static final int DISK_CACHE_SIZE = 50 * 1024 * 1024; // 50MB
-    private static final ConcurrentHashMap<EndpointUrl, Service> sServices = new ConcurrentHashMap<EndpointUrl, Service>();
+    private static final ConcurrentHashMap<EndpointUrl, Service> sServices = new ConcurrentHashMap<>();
     // endregion
 
     // region Member Variables

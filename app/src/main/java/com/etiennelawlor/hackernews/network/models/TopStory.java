@@ -12,7 +12,7 @@ import java.util.List;
 
 public final class TopStory {
     
-    //region Variables
+    // region Fields
     @SerializedName("by")
     private String mBy;
     @SerializedName("descendants")
@@ -33,10 +33,9 @@ public final class TopStory {
     private String mType;
     @SerializedName("url")
     private String mUrl;
-    
-    //endregion
+    // endregion
 
-    //region Getters
+    // region Getters
 
     public String getBy() {
         if (TextUtils.isEmpty(mBy))
@@ -105,7 +104,7 @@ public final class TopStory {
             return mUrl;
     }
 
-    //endregion
+    // endregion
 
     // region Setters
 

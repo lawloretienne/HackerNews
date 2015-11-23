@@ -1,14 +1,9 @@
 package com.etiennelawlor.hackernews.adapters;
 
-import android.content.Context;
 import android.net.Uri;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.Spanned;
 import android.text.TextUtils;
-import android.text.style.ForegroundColorSpan;
-import android.text.style.RelativeSizeSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,13 +12,15 @@ import android.widget.TextView;
 import com.etiennelawlor.hackernews.R;
 import com.etiennelawlor.hackernews.network.models.TopStory;
 import com.etiennelawlor.hackernews.utils.HackerNewsUtility;
+import com.etiennelawlor.trestle.library.Span;
+import com.etiennelawlor.trestle.library.Trestle;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 /**
  * Created by etiennelawlor on 3/21/15.
@@ -31,16 +28,11 @@ import butterknife.InjectView;
 public class TopStoriesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     // region Member Variables
-    private Context mContext;
-    private List<TopStory> mTopStories;
-    // endregion
-
-    // region Listeners
+    private final List<TopStory> mTopStories;
     // endregion
 
     // region Constructors
-    public TopStoriesRecyclerViewAdapter(Context context) {
-        mContext = context;
+    public TopStoriesRecyclerViewAdapter() {
         mTopStories = new ArrayList<>();
     }
     // endregion
@@ -61,49 +53,19 @@ public class TopStoriesRecyclerViewAdapter extends RecyclerView.Adapter<Recycler
 
         final TopStory topStory = mTopStories.get(position);
 
-        if(topStory != null){
+        if (topStory != null) {
 
-            final String title = topStory.getTitle();
-            final String url = topStory.getUrl();
-            final int score = topStory.getScore();
-            final String by = topStory.getBy();
-            final long time = topStory.getTime();
-            final int descendants = topStory.getDescendants();
-
-            if(!TextUtils.isEmpty(url)){
-                Uri uri = Uri.parse(url);
-                String host = uri.getHost();
-                SpannableString shortUrlSS = new SpannableString(String.format("(%s)", host));
-                shortUrlSS.setSpan( new ForegroundColorSpan(mContext.getResources().getColor(R.color.grey_600)), 0, shortUrlSS.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                shortUrlSS.setSpan(new RelativeSizeSpan(0.875f), 0, shortUrlSS.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-                holder.mTitleTextView.setText(TextUtils.concat(title, " ", shortUrlSS));
-            } else {
-                holder.mTitleTextView.setText(title);
-            }
-
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTimeInMillis(time * 1000);
-            String date = HackerNewsUtility.getRelativeDate(calendar);
-
-            String commentCount = "";
-            if(descendants > 0){
-                commentCount = mContext.getResources().getQuantityString(R.plurals.comment_count, descendants, descendants);
-            } else {
-                commentCount = "discuss";
-            }
-
-            holder.mSubTitleTextView.setText(String.format("%d points by %s %s | %s", score, by, date, commentCount));
+            setUpTitle(holder.mTitleTextView, topStory);
+            setUpSubtitle(holder.mSubTitleTextView, topStory);
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    HackerNewsUtility.openWebPage(mContext, url);
+                    final String url = topStory.getUrl();
+                    HackerNewsUtility.openWebPage(v.getContext(), url);
                 }
             });
-
         }
-
     }
 
     @Override
@@ -118,8 +80,8 @@ public class TopStoriesRecyclerViewAdapter extends RecyclerView.Adapter<Recycler
         notifyItemInserted(position);
     }
 
-    public void clear(){
-        while(getItemCount() > 0){
+    public void clear() {
+        while (getItemCount() > 0) {
             remove(0);
         }
     }
@@ -129,8 +91,52 @@ public class TopStoriesRecyclerViewAdapter extends RecyclerView.Adapter<Recycler
         notifyItemRemoved(position);
     }
 
-    public TopStory getItem(int position){
+    public TopStory getItem(int position) {
         return mTopStories.get(position);
+    }
+
+    private void setUpTitle(TextView tv, TopStory topStory) {
+        final String url = topStory.getUrl();
+        final String title = topStory.getTitle();
+
+        if (!TextUtils.isEmpty(url)) {
+            Uri uri = Uri.parse(url);
+            String host = uri.getHost();
+
+            List<Span> spans = new ArrayList<>();
+            spans.add(new Span.Builder(title)
+                    .build());
+            spans.add(new Span.Builder(" ")
+                    .build());
+            spans.add(new Span.Builder(String.format("(%s)", host))
+                    .foregroundColor(ContextCompat.getColor(tv.getContext(), R.color.grey_600))
+                    .relativeSize(0.875f)
+                    .build());
+            tv.setText(Trestle.getFormattedText(spans));
+        } else {
+            if (!TextUtils.isEmpty(title))
+                tv.setText(title);
+        }
+    }
+
+    private void setUpSubtitle(TextView tv, TopStory topStory) {
+        final int score = topStory.getScore();
+        final String by = topStory.getBy();
+        final long time = topStory.getTime();
+        final int descendants = topStory.getDescendants();
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(time * 1000);
+        String date = HackerNewsUtility.getRelativeDate(calendar);
+
+        String commentCount;
+        if (descendants > 0) {
+            commentCount = tv.getContext().getResources().getQuantityString(R.plurals.comment_count, descendants, descendants);
+        } else {
+            commentCount = "discuss";
+        }
+
+        tv.setText(String.format("%d points by %s %s | %s", score, by, date, commentCount));
     }
 
     // endregion
@@ -138,13 +144,20 @@ public class TopStoriesRecyclerViewAdapter extends RecyclerView.Adapter<Recycler
     // region Inner Classes
 
     public static class TopStoryViewHolder extends RecyclerView.ViewHolder {
-        @InjectView(R.id.title_tv) TextView mTitleTextView;
-        @InjectView(R.id.subtitle_tv) TextView mSubTitleTextView;
 
-        TopStoryViewHolder(View view) {
+        // region Member Variables
+        @Bind(R.id.title_tv)
+        TextView mTitleTextView;
+        @Bind(R.id.subtitle_tv)
+        TextView mSubTitleTextView;
+        // endregion
+
+        // region Constructors
+        public TopStoryViewHolder(View view) {
             super(view);
-            ButterKnife.inject(this, view);
+            ButterKnife.bind(this, view);
         }
+        // endregion
     }
 
     // endregion

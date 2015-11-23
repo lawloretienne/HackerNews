@@ -37,7 +37,7 @@ public class HackerNewsApplication extends Application {
     }
 
     // region Helper Methods
-    public static HackerNewsApplication get() {
+    public static HackerNewsApplication getInstance() {
         return sCurrentApplication;
     }
 
