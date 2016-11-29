@@ -2,7 +2,6 @@ package com.etiennelawlor.hackernews.ui;
 
 import android.content.Context;
 import android.support.v7.widget.AppCompatButton;
-import android.support.v7.widget.AppCompatTextView;
 import android.util.AttributeSet;
 
 import com.etiennelawlor.hackernews.utilities.CustomFontUtils;

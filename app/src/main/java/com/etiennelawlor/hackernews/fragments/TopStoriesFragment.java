@@ -3,7 +3,6 @@ package com.etiennelawlor.hackernews.fragments;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -17,7 +16,8 @@ import android.widget.ProgressBar;
 
 import com.etiennelawlor.hackernews.R;
 import com.etiennelawlor.hackernews.adapters.TopStoriesAdapter;
-import com.etiennelawlor.hackernews.network.Api;
+import com.etiennelawlor.hackernews.network.HackerNewsService;
+import com.etiennelawlor.hackernews.network.ServiceGenerator;
 import com.etiennelawlor.hackernews.network.models.TopStory;
 import com.etiennelawlor.hackernews.utilities.FontCache;
 import com.etiennelawlor.hackernews.utilities.HackerNewsUtility;
@@ -34,7 +34,7 @@ import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
-public class TopStoriesFragment extends Fragment implements TopStoriesAdapter.OnItemClickListener {
+public class TopStoriesFragment extends BaseFragment implements TopStoriesAdapter.OnItemClickListener {
 
     // region Views
     @Bind(R.id.toolbar)
@@ -52,6 +52,7 @@ public class TopStoriesFragment extends Fragment implements TopStoriesAdapter.On
     private boolean isRefreshing = false;
     private long storyIdCount = 0;
     private Typeface font;
+    private HackerNewsService hackerNewsService;
     // endregion
 
     // region Listeners
@@ -92,6 +93,10 @@ public class TopStoriesFragment extends Fragment implements TopStoriesAdapter.On
         super.onCreate(savedInstanceState);
 
         font = FontCache.getTypeface("Lato-Medium.ttf", getContext());
+
+        hackerNewsService = ServiceGenerator.createService(
+                HackerNewsService.class,
+                HackerNewsService.BASE_URL);
     }
 
     @Override
@@ -148,7 +153,7 @@ public class TopStoriesFragment extends Fragment implements TopStoriesAdapter.On
 
     // region Helper Methods
     private void loadTopStories() {
-        Api.getService(Api.getEndpointUrl()).getTopStoryIds()
+        hackerNewsService.getTopStoryIds()
                 .concatMap(new Func1<List<Long>, Observable<?>>() {
                     @Override
                     public Observable<?> call(List<Long> storyIds) {
@@ -161,7 +166,7 @@ public class TopStoriesFragment extends Fragment implements TopStoriesAdapter.On
                     @Override
                     public Observable<TopStory> call(Object o) {
                         Long storyId = (Long) o;
-                        return Api.getService(Api.getEndpointUrl()).getTopStory(storyId);
+                        return hackerNewsService.getTopStory(storyId);
                     }
                 })
                 .subscribeOn(Schedulers.newThread())
@@ -189,7 +194,7 @@ public class TopStoriesFragment extends Fragment implements TopStoriesAdapter.On
     }
 
     private void reloadTopStories() {
-        Api.getService(Api.getEndpointUrl()).getTopStoryIds()
+        hackerNewsService.getTopStoryIds()
                 .concatMap(new Func1<List<Long>, Observable<?>>() {
                     @Override
                     public Observable<?> call(List<Long> storyIds) {
@@ -202,7 +207,7 @@ public class TopStoriesFragment extends Fragment implements TopStoriesAdapter.On
                     @Override
                     public Observable<TopStory> call(Object o) {
                         Long storyId = (Long) o;
-                        return Api.getService(Api.getEndpointUrl()).getTopStory(storyId);
+                        return hackerNewsService.getTopStory(storyId);
                     }
                 })
                 .subscribeOn(Schedulers.newThread())

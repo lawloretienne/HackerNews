@@ -6,6 +6,7 @@ import android.support.multidex.MultiDex;
 import android.support.v7.app.AppCompatDelegate;
 import android.util.Log;
 
+import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 
 import java.io.File;
@@ -35,6 +36,7 @@ public class HackerNewsApplication extends Application {
         super.onCreate();
 
         initializeTimber();
+        initializeLeakCanary();
 
         currentApplication = this;
     }
@@ -72,6 +74,15 @@ public class HackerNewsApplication extends Application {
         } else {
             Timber.plant(new ReleaseTree());
         }
+    }
+
+    private void initializeLeakCanary() {
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            // This process is dedicated to LeakCanary for heap analysis.
+            // You should not init your app in this process.
+            return;
+        }
+        refWatcher = LeakCanary.install(this);
     }
     // endregion
 
