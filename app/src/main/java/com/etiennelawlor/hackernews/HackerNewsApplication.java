@@ -3,6 +3,7 @@ package com.etiennelawlor.hackernews;
 import android.app.Application;
 import android.content.Context;
 import android.support.multidex.MultiDex;
+import android.support.v7.app.AppCompatDelegate;
 import android.util.Log;
 
 import com.squareup.leakcanary.RefWatcher;
@@ -15,6 +16,10 @@ import timber.log.Timber;
  * Created by etiennelawlor on 3/21/15.
  */
 public class HackerNewsApplication extends Application {
+
+    static {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
 
     // region Static Variables
     private static HackerNewsApplication currentApplication = null;
@@ -29,11 +34,7 @@ public class HackerNewsApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        if (BuildConfig.DEBUG) {
-            Timber.plant(new Timber.DebugTree());
-        } else {
-            Timber.plant(new CrashReportingTree());
-        }
+        initializeTimber();
 
         currentApplication = this;
     }
@@ -58,19 +59,46 @@ public class HackerNewsApplication extends Application {
         HackerNewsApplication application = (HackerNewsApplication) context.getApplicationContext();
         return application.refWatcher;
     }
+
+    private void initializeTimber() {
+        if (BuildConfig.DEBUG) {
+            Timber.plant(new Timber.DebugTree() {
+                // Add the line number to the tag
+                @Override
+                protected String createStackElementTag(StackTraceElement element) {
+                    return super.createStackElementTag(element) + ":" + element.getLineNumber();
+                }
+            });
+        } else {
+            Timber.plant(new ReleaseTree());
+        }
+    }
     // endregion
 
     // region Inner Classes
 
-    /** A tree which logs important information for crash reporting. */
-    private static class CrashReportingTree extends Timber.Tree {
+
+    /**
+     * A tree which logs important information for crash reporting.
+     */
+    private static class ReleaseTree extends Timber.Tree {
+
+        private static final int MAX_LOG_LENGTH = 4000;
+
         @Override
-        protected void log(int priority, String tag, String message, Throwable t) {
+        protected boolean isLoggable(int priority) {
             if (priority == Log.VERBOSE || priority == Log.DEBUG) {
-                return;
+                return false;
             }
 
-//            FakeCrashLibrary.log(priority, tag, message);
+            // Only log WARN, INFO, ERROR, WTF
+            return true;
+        }
+
+        @Override
+        protected void log(int priority, String tag, String message, Throwable t) {
+            if (isLoggable(priority)) {
+                //            FakeCrashLibrary.log(priority, tag, message);
 //
 //            if (t != null) {
 //                if (priority == Log.ERROR) {
@@ -79,6 +107,47 @@ public class HackerNewsApplication extends Application {
 //                    FakeCrashLibrary.logWarning(t);
 //                }
 //            }
+
+//                if (!Fabric.isInitialized()) {
+//                    return;
+//                }
+//
+//                Crashlytics.log(priority, tag, message);
+//
+//                if (t != null) {
+//                    if (priority == Log.ERROR) {
+//                        Crashlytics.logException(t);
+//                    } else if (priority == Log.INFO) {
+//                        Crashlytics.log(message);
+//                    }
+//                }
+
+                // Message is short enough, does not need to be broken into chunks
+                if (message.length() < MAX_LOG_LENGTH) {
+                    if (priority == Log.ASSERT) {
+                        Log.wtf(tag, message);
+                    } else {
+                        Log.println(priority, tag, message);
+                    }
+                    return;
+                }
+
+                // Split by line, then ensure each line can fit into Log's maximum length
+                for (int i = 0, length = message.length(); i < length; i++) {
+                    int newline = message.indexOf('\n', i);
+                    newline = newline != -1 ? newline : length;
+                    do {
+                        int end = Math.min(newline, i + MAX_LOG_LENGTH);
+                        String part = message.substring(i, end);
+                        if (priority == Log.ASSERT) {
+                            Log.wtf(tag, part);
+                        } else {
+                            Log.println(priority, tag, part);
+                        }
+                        i = end;
+                    } while (i < newline);
+                }
+            }
         }
     }
 
