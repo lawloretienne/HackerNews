@@ -1,4 +1,4 @@
-package com.etiennelawlor.hackernews.utils;
+package com.etiennelawlor.hackernews.utilities;
 
 import android.content.Context;
 import android.content.Intent;

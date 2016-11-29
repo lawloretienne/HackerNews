@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.etiennelawlor.hackernews.R;
 import com.etiennelawlor.hackernews.network.models.TopStory;
-import com.etiennelawlor.hackernews.utils.HackerNewsUtility;
+import com.etiennelawlor.hackernews.utilities.HackerNewsUtility;
 import com.etiennelawlor.trestle.library.Span;
 import com.etiennelawlor.trestle.library.Trestle;
 
@@ -109,7 +109,7 @@ public class TopStoriesRecyclerViewAdapter extends RecyclerView.Adapter<Recycler
             spans.add(new Span.Builder(" ")
                     .build());
             spans.add(new Span.Builder(String.format("(%s)", host))
-                    .foregroundColor(ContextCompat.getColor(tv.getContext(), R.color.grey_600))
+                    .foregroundColor(ContextCompat.getColor(tv.getContext(), R.color.secondary_text))
                     .relativeSize(0.875f)
                     .build());
             tv.setText(Trestle.getFormattedText(spans));
@@ -136,7 +136,7 @@ public class TopStoriesRecyclerViewAdapter extends RecyclerView.Adapter<Recycler
             commentCount = "discuss";
         }
 
-        tv.setText(String.format("%d points by %s %s | %s", score, by, date, commentCount));
+        tv.setText(String.format("%d points by %s • %s • %s", score, by, date, commentCount));
     }
 
     // endregion
