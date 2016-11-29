@@ -1,10 +1,15 @@
 package com.etiennelawlor.hackernews.fragments;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +19,8 @@ import com.etiennelawlor.hackernews.R;
 import com.etiennelawlor.hackernews.adapters.TopStoriesRecyclerViewAdapter;
 import com.etiennelawlor.hackernews.network.Api;
 import com.etiennelawlor.hackernews.network.models.TopStory;
+import com.etiennelawlor.hackernews.utilities.FontCache;
+import com.etiennelawlor.hackernews.utilities.TrestleUtility;
 
 import java.util.List;
 
@@ -32,7 +39,10 @@ public class TopStoriesActivityFragment extends Fragment {
     private TopStoriesRecyclerViewAdapter topStoriesRecyclerViewAdapter;
     private boolean isRefreshing = false;
     private long storyIdCount = 0;
+    private Typeface font;
 
+    @Bind(R.id.toolbar)
+    Toolbar toolbar;
     @Bind(R.id.top_stories_rv)
     RecyclerView topStoriesRecyclerView;
     @Bind(R.id.swipe_refresh_layout)
@@ -59,6 +69,12 @@ public class TopStoriesActivityFragment extends Fragment {
     // endregion
 
     // region Factory Methods
+    public static TopStoriesActivityFragment newInstance(Bundle extras) {
+        TopStoriesActivityFragment fragment = new TopStoriesActivityFragment();
+        fragment.setArguments(extras);
+        return fragment;
+    }
+
     public static TopStoriesActivityFragment newInstance() {
         TopStoriesActivityFragment fragment = new TopStoriesActivityFragment();
         Bundle args = new Bundle();
@@ -68,6 +84,15 @@ public class TopStoriesActivityFragment extends Fragment {
     // endregion
 
     // region Lifecycle Methods
+
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        font = FontCache.getTypeface("Lato-Medium.ttf", getContext());
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -80,6 +105,13 @@ public class TopStoriesActivityFragment extends Fragment {
     @Override
     public void onViewCreated(View v, Bundle savedInstanceState) {
         super.onViewCreated(v, savedInstanceState);
+
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+
+        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(TrestleUtility.getFormattedText("HackerNews", font));
+        }
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         topStoriesRecyclerView.setLayoutManager(layoutManager);

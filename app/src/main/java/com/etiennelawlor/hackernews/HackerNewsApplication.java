@@ -2,6 +2,7 @@ package com.etiennelawlor.hackernews;
 
 import android.app.Application;
 import android.content.Context;
+import android.support.multidex.MultiDex;
 import android.util.Log;
 
 import com.squareup.leakcanary.RefWatcher;
@@ -23,6 +24,7 @@ public class HackerNewsApplication extends Application {
     private RefWatcher refWatcher;
     // endregion
 
+    // region Lifecycler Methods
     @Override
     public void onCreate() {
         super.onCreate();
@@ -34,6 +36,13 @@ public class HackerNewsApplication extends Application {
         }
 
         currentApplication = this;
+    }
+    // endregion
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
     }
 
     // region Helper Methods
