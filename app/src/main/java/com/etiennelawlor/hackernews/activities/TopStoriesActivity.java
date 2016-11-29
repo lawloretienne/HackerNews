@@ -5,7 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 
 import com.etiennelawlor.hackernews.R;
-import com.etiennelawlor.hackernews.fragments.TopStoriesActivityFragment;
+import com.etiennelawlor.hackernews.fragments.TopStoriesFragment;
 
 public class TopStoriesActivity extends AppCompatActivity {
 
@@ -17,7 +17,7 @@ public class TopStoriesActivity extends AppCompatActivity {
 
         Fragment fragment = getSupportFragmentManager().findFragmentById(android.R.id.content);
         if (fragment == null) {
-            fragment = TopStoriesActivityFragment.newInstance(getIntent().getExtras());
+            fragment = TopStoriesFragment.newInstance(getIntent().getExtras());
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(android.R.id.content, fragment, "")

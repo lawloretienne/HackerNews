@@ -16,10 +16,11 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.etiennelawlor.hackernews.R;
-import com.etiennelawlor.hackernews.adapters.TopStoriesRecyclerViewAdapter;
+import com.etiennelawlor.hackernews.adapters.TopStoriesAdapter;
 import com.etiennelawlor.hackernews.network.Api;
 import com.etiennelawlor.hackernews.network.models.TopStory;
 import com.etiennelawlor.hackernews.utilities.FontCache;
+import com.etiennelawlor.hackernews.utilities.HackerNewsUtility;
 import com.etiennelawlor.hackernews.utilities.TrestleUtility;
 
 import java.util.List;
@@ -33,7 +34,7 @@ import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
-public class TopStoriesActivityFragment extends Fragment {
+public class TopStoriesFragment extends Fragment implements TopStoriesAdapter.OnItemClickListener {
 
     // region Views
     @Bind(R.id.toolbar)
@@ -47,7 +48,7 @@ public class TopStoriesActivityFragment extends Fragment {
     // endregion
 
     // region Member Variables
-    private TopStoriesRecyclerViewAdapter topStoriesRecyclerViewAdapter;
+    private TopStoriesAdapter topStoriesAdapter;
     private boolean isRefreshing = false;
     private long storyIdCount = 0;
     private Typeface font;
@@ -58,7 +59,7 @@ public class TopStoriesActivityFragment extends Fragment {
         @Override
         public void onRefresh() {
             isRefreshing = true;
-            topStoriesRecyclerViewAdapter.clear();
+            topStoriesAdapter.clear();
             // Refresh items
             reloadTopStories();
         }
@@ -66,19 +67,19 @@ public class TopStoriesActivityFragment extends Fragment {
     // endregion
 
     // region Constructors
-    public TopStoriesActivityFragment() {
+    public TopStoriesFragment() {
     }
     // endregion
 
     // region Factory Methods
-    public static TopStoriesActivityFragment newInstance(Bundle extras) {
-        TopStoriesActivityFragment fragment = new TopStoriesActivityFragment();
+    public static TopStoriesFragment newInstance(Bundle extras) {
+        TopStoriesFragment fragment = new TopStoriesFragment();
         fragment.setArguments(extras);
         return fragment;
     }
 
-    public static TopStoriesActivityFragment newInstance() {
-        TopStoriesActivityFragment fragment = new TopStoriesActivityFragment();
+    public static TopStoriesFragment newInstance() {
+        TopStoriesFragment fragment = new TopStoriesFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -115,9 +116,9 @@ public class TopStoriesActivityFragment extends Fragment {
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         topStoriesRecyclerView.setLayoutManager(layoutManager);
-        topStoriesRecyclerViewAdapter = new TopStoriesRecyclerViewAdapter();
-
-        topStoriesRecyclerView.setAdapter(topStoriesRecyclerViewAdapter);
+        topStoriesAdapter = new TopStoriesAdapter();
+        topStoriesAdapter.setOnItemClickListener(this);
+        topStoriesRecyclerView.setAdapter(topStoriesAdapter);
         swipeRefreshLayout.setColorSchemeResources(R.color.primary, R.color.primary_dark);
 
         swipeRefreshLayout.setOnRefreshListener(swipeRefreshLayoutOnRefreshListener);
@@ -130,6 +131,19 @@ public class TopStoriesActivityFragment extends Fragment {
         super.onDestroyView();
         ButterKnife.unbind(this);
     }
+    // endregion
+
+    // region TopStoriesAdapter.OnItemClickListener Methods
+
+    @Override
+    public void onItemClick(int position, View view) {
+        TopStory topStory = topStoriesAdapter.getItem(position);
+        if(topStory != null){
+            final String url = topStory.getUrl();
+            HackerNewsUtility.openWebPage(view.getContext(), url);
+        }
+    }
+
     // endregion
 
     // region Helper Methods
@@ -158,9 +172,9 @@ public class TopStoriesActivityFragment extends Fragment {
                         if (!isRefreshing && topStory != null) {
                             Timber.d("getTopStory : success()");
                             progressBar.setVisibility(View.GONE);
-                            topStoriesRecyclerViewAdapter.add(topStoriesRecyclerViewAdapter.getItemCount(), topStory);
+                            topStoriesAdapter.add(topStory);
 
-                            if (topStoriesRecyclerViewAdapter.getItemCount() == storyIdCount) {
+                            if (topStoriesAdapter.getItemCount() == storyIdCount) {
                                 swipeRefreshLayout.setRefreshing(false);
                                 isRefreshing = false;
                             }
@@ -199,9 +213,9 @@ public class TopStoriesActivityFragment extends Fragment {
                         if (topStory != null) {
                             Timber.d("getTopStory : success()");
                             progressBar.setVisibility(View.GONE);
-                            topStoriesRecyclerViewAdapter.add(topStoriesRecyclerViewAdapter.getItemCount(), topStory);
+                            topStoriesAdapter.add(topStory);
 
-                            if (topStoriesRecyclerViewAdapter.getItemCount() == storyIdCount) {
+                            if (topStoriesAdapter.getItemCount() == storyIdCount) {
                                 swipeRefreshLayout.setRefreshing(false);
                                 isRefreshing = false;
                             }

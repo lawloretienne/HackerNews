@@ -2,4 +2,7 @@
     <string name="app_name">Hacker News</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="reload">RELOAD</string>
+    <string name="check_your_network_connection">Can\'t load data. Check your network connection.</string>
+
 </resources>
