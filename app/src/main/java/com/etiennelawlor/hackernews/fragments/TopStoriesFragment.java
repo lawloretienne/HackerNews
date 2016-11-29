@@ -39,8 +39,8 @@ public class TopStoriesFragment extends Fragment implements TopStoriesAdapter.On
     // region Views
     @Bind(R.id.toolbar)
     Toolbar toolbar;
-    @Bind(R.id.top_stories_rv)
-    RecyclerView topStoriesRecyclerView;
+    @Bind(R.id.rv)
+    RecyclerView recyclerView;
     @Bind(R.id.swipe_refresh_layout)
     SwipeRefreshLayout swipeRefreshLayout;
     @Bind(R.id.pb)
@@ -115,10 +115,10 @@ public class TopStoriesFragment extends Fragment implements TopStoriesAdapter.On
         }
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        topStoriesRecyclerView.setLayoutManager(layoutManager);
+        recyclerView.setLayoutManager(layoutManager);
         topStoriesAdapter = new TopStoriesAdapter();
         topStoriesAdapter.setOnItemClickListener(this);
-        topStoriesRecyclerView.setAdapter(topStoriesAdapter);
+        recyclerView.setAdapter(topStoriesAdapter);
         swipeRefreshLayout.setColorSchemeResources(R.color.primary, R.color.primary_dark);
 
         swipeRefreshLayout.setOnRefreshListener(swipeRefreshLayoutOnRefreshListener);
