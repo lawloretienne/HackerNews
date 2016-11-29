@@ -29,24 +29,24 @@ import timber.log.Timber;
 public class TopStoriesActivityFragment extends Fragment {
 
     // region Member Variables
-    private TopStoriesRecyclerViewAdapter mTopStoriesRecyclerViewAdapter;
-    private boolean mIsRefreshing = false;
-    private long mStoryIdCount = 0;
+    private TopStoriesRecyclerViewAdapter topStoriesRecyclerViewAdapter;
+    private boolean isRefreshing = false;
+    private long storyIdCount = 0;
 
     @Bind(R.id.top_stories_rv)
-    RecyclerView mTopStoriesRecyclerView;
+    RecyclerView topStoriesRecyclerView;
     @Bind(R.id.swipe_refresh_layout)
-    SwipeRefreshLayout mSwipeRefreshLayout;
+    SwipeRefreshLayout swipeRefreshLayout;
     @Bind(R.id.pb)
-    ProgressBar mProgressBar;
+    ProgressBar progressBar;
     // endregion
 
     // region Listeners
-    private final SwipeRefreshLayout.OnRefreshListener mSwipeRefreshLayoutOnRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
+    private final SwipeRefreshLayout.OnRefreshListener swipeRefreshLayoutOnRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
         @Override
         public void onRefresh() {
-            mIsRefreshing = true;
-            mTopStoriesRecyclerViewAdapter.clear();
+            isRefreshing = true;
+            topStoriesRecyclerViewAdapter.clear();
             // Refresh items
             reloadTopStories();
         }
@@ -82,13 +82,13 @@ public class TopStoriesActivityFragment extends Fragment {
         super.onViewCreated(v, savedInstanceState);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        mTopStoriesRecyclerView.setLayoutManager(layoutManager);
-        mTopStoriesRecyclerViewAdapter = new TopStoriesRecyclerViewAdapter();
+        topStoriesRecyclerView.setLayoutManager(layoutManager);
+        topStoriesRecyclerViewAdapter = new TopStoriesRecyclerViewAdapter();
 
-        mTopStoriesRecyclerView.setAdapter(mTopStoriesRecyclerViewAdapter);
-        mSwipeRefreshLayout.setColorSchemeResources(R.color.primary, R.color.primary_dark);
+        topStoriesRecyclerView.setAdapter(topStoriesRecyclerViewAdapter);
+        swipeRefreshLayout.setColorSchemeResources(R.color.primary, R.color.primary_dark);
 
-        mSwipeRefreshLayout.setOnRefreshListener(mSwipeRefreshLayoutOnRefreshListener);
+        swipeRefreshLayout.setOnRefreshListener(swipeRefreshLayoutOnRefreshListener);
 
         loadTopStories();
     }
@@ -106,7 +106,7 @@ public class TopStoriesActivityFragment extends Fragment {
                 .concatMap(new Func1<List<Long>, Observable<?>>() {
                     @Override
                     public Observable<?> call(List<Long> storyIds) {
-                        mStoryIdCount = storyIds.size();
+                        storyIdCount = storyIds.size();
 
                         return Observable.from(storyIds);
                     }
@@ -123,14 +123,14 @@ public class TopStoriesActivityFragment extends Fragment {
                 .subscribe(new Action1<TopStory>() {
                     @Override
                     public void call(TopStory topStory) {
-                        if (!mIsRefreshing && topStory != null) {
+                        if (!isRefreshing && topStory != null) {
                             Timber.d("getTopStory : success()");
-                            mProgressBar.setVisibility(View.GONE);
-                            mTopStoriesRecyclerViewAdapter.add(mTopStoriesRecyclerViewAdapter.getItemCount(), topStory);
+                            progressBar.setVisibility(View.GONE);
+                            topStoriesRecyclerViewAdapter.add(topStoriesRecyclerViewAdapter.getItemCount(), topStory);
 
-                            if (mTopStoriesRecyclerViewAdapter.getItemCount() == mStoryIdCount) {
-                                mSwipeRefreshLayout.setRefreshing(false);
-                                mIsRefreshing = false;
+                            if (topStoriesRecyclerViewAdapter.getItemCount() == storyIdCount) {
+                                swipeRefreshLayout.setRefreshing(false);
+                                isRefreshing = false;
                             }
                         }
                     }
@@ -147,7 +147,7 @@ public class TopStoriesActivityFragment extends Fragment {
                 .concatMap(new Func1<List<Long>, Observable<?>>() {
                     @Override
                     public Observable<?> call(List<Long> storyIds) {
-                        mStoryIdCount = storyIds.size();
+                        storyIdCount = storyIds.size();
 
                         return Observable.from(storyIds);
                     }
@@ -166,12 +166,12 @@ public class TopStoriesActivityFragment extends Fragment {
                     public void call(TopStory topStory) {
                         if (topStory != null) {
                             Timber.d("getTopStory : success()");
-                            mProgressBar.setVisibility(View.GONE);
-                            mTopStoriesRecyclerViewAdapter.add(mTopStoriesRecyclerViewAdapter.getItemCount(), topStory);
+                            progressBar.setVisibility(View.GONE);
+                            topStoriesRecyclerViewAdapter.add(topStoriesRecyclerViewAdapter.getItemCount(), topStory);
 
-                            if (mTopStoriesRecyclerViewAdapter.getItemCount() == mStoryIdCount) {
-                                mSwipeRefreshLayout.setRefreshing(false);
-                                mIsRefreshing = false;
+                            if (topStoriesRecyclerViewAdapter.getItemCount() == storyIdCount) {
+                                swipeRefreshLayout.setRefreshing(false);
+                                isRefreshing = false;
                             }
                         }
                     }

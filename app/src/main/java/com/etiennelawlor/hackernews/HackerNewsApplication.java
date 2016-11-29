@@ -16,11 +16,11 @@ import timber.log.Timber;
 public class HackerNewsApplication extends Application {
 
     // region Static Variables
-    private static HackerNewsApplication sCurrentApplication = null;
+    private static HackerNewsApplication currentApplication = null;
     // endregion
 
     // region Member Variables
-    private RefWatcher mRefWatcher;
+    private RefWatcher refWatcher;
     // endregion
 
     @Override
@@ -33,21 +33,21 @@ public class HackerNewsApplication extends Application {
             Timber.plant(new CrashReportingTree());
         }
 
-        sCurrentApplication = this;
+        currentApplication = this;
     }
 
     // region Helper Methods
     public static HackerNewsApplication getInstance() {
-        return sCurrentApplication;
+        return currentApplication;
     }
 
     public static File getCacheDirectory()  {
-        return sCurrentApplication.getCacheDir();
+        return currentApplication.getCacheDir();
     }
 
     public static RefWatcher getRefWatcher(Context context) {
         HackerNewsApplication application = (HackerNewsApplication) context.getApplicationContext();
-        return application.mRefWatcher;
+        return application.refWatcher;
     }
     // endregion
 

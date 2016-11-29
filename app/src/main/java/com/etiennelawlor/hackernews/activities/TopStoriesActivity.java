@@ -15,7 +15,7 @@ public class TopStoriesActivity extends AppCompatActivity {
 
     // region Member Variables
     @Bind(R.id.toolbar)
-    Toolbar mToolbar;
+    Toolbar toolbar;
     // endregion
 
     // region Lifecycle Methods
@@ -27,7 +27,7 @@ public class TopStoriesActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
 //        mToolbar.setNavigationIcon(R.drawable.ic_up_navigation);
-        setSupportActionBar(mToolbar);
+        setSupportActionBar(toolbar);
 
         getSupportFragmentManager()
                 .beginTransaction()

@@ -28,12 +28,12 @@ import butterknife.ButterKnife;
 public class TopStoriesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     // region Member Variables
-    private final List<TopStory> mTopStories;
+    private final List<TopStory> topStories;
     // endregion
 
     // region Constructors
     public TopStoriesRecyclerViewAdapter() {
-        mTopStories = new ArrayList<>();
+        topStories = new ArrayList<>();
     }
     // endregion
 
@@ -51,12 +51,12 @@ public class TopStoriesRecyclerViewAdapter extends RecyclerView.Adapter<Recycler
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         TopStoryViewHolder holder = (TopStoryViewHolder) viewHolder;
 
-        final TopStory topStory = mTopStories.get(position);
+        final TopStory topStory = topStories.get(position);
 
         if (topStory != null) {
 
-            setUpTitle(holder.mTitleTextView, topStory);
-            setUpSubtitle(holder.mSubTitleTextView, topStory);
+            setUpTitle(holder.titleTextView, topStory);
+            setUpSubtitle(holder.subTitleTextView, topStory);
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -70,13 +70,13 @@ public class TopStoriesRecyclerViewAdapter extends RecyclerView.Adapter<Recycler
 
     @Override
     public int getItemCount() {
-        return mTopStories.size();
+        return topStories.size();
     }
 
     // region Helper Methods
 
     public void add(int position, TopStory item) {
-        mTopStories.add(position, item);
+        topStories.add(position, item);
         notifyItemInserted(position);
     }
 
@@ -87,12 +87,12 @@ public class TopStoriesRecyclerViewAdapter extends RecyclerView.Adapter<Recycler
     }
 
     public void remove(int position) {
-        mTopStories.remove(position);
+        topStories.remove(position);
         notifyItemRemoved(position);
     }
 
     public TopStory getItem(int position) {
-        return mTopStories.get(position);
+        return topStories.get(position);
     }
 
     private void setUpTitle(TextView tv, TopStory topStory) {
@@ -147,9 +147,9 @@ public class TopStoriesRecyclerViewAdapter extends RecyclerView.Adapter<Recycler
 
         // region Member Variables
         @Bind(R.id.title_tv)
-        TextView mTitleTextView;
+        TextView titleTextView;
         @Bind(R.id.subtitle_tv)
-        TextView mSubTitleTextView;
+        TextView subTitleTextView;
         // endregion
 
         // region Constructors
