@@ -145,7 +145,8 @@ public class TopStoriesFragment extends BaseFragment implements TopStoriesAdapte
         TopStory topStory = topStoriesAdapter.getItem(position);
         if(topStory != null){
             final String url = topStory.getUrl();
-            HackerNewsUtility.openWebPage(view.getContext(), url);
+//            HackerNewsUtility.openWebPage(view.getContext(), url);
+            HackerNewsUtility.openCustomTab(TopStoriesFragment.this.getActivity(), url);
         }
     }
 
