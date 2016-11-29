@@ -35,12 +35,7 @@ import timber.log.Timber;
 
 public class TopStoriesActivityFragment extends Fragment {
 
-    // region Member Variables
-    private TopStoriesRecyclerViewAdapter topStoriesRecyclerViewAdapter;
-    private boolean isRefreshing = false;
-    private long storyIdCount = 0;
-    private Typeface font;
-
+    // region Views
     @Bind(R.id.toolbar)
     Toolbar toolbar;
     @Bind(R.id.top_stories_rv)
@@ -49,6 +44,13 @@ public class TopStoriesActivityFragment extends Fragment {
     SwipeRefreshLayout swipeRefreshLayout;
     @Bind(R.id.pb)
     ProgressBar progressBar;
+    // endregion
+
+    // region Member Variables
+    private TopStoriesRecyclerViewAdapter topStoriesRecyclerViewAdapter;
+    private boolean isRefreshing = false;
+    private long storyIdCount = 0;
+    private Typeface font;
     // endregion
 
     // region Listeners
@@ -84,8 +86,6 @@ public class TopStoriesActivityFragment extends Fragment {
     // endregion
 
     // region Lifecycle Methods
-
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

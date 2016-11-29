@@ -145,7 +145,7 @@ public class TopStoriesRecyclerViewAdapter extends RecyclerView.Adapter<Recycler
 
     public static class TopStoryViewHolder extends RecyclerView.ViewHolder {
 
-        // region Member Variables
+        // region Views
         @Bind(R.id.title_tv)
         TextView titleTextView;
         @Bind(R.id.subtitle_tv)

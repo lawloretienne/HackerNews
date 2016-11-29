@@ -14,94 +14,94 @@ public final class TopStory {
     
     // region Fields
     @SerializedName("by")
-    private String mBy;
+    private String by;
     @SerializedName("descendants")
-    private Integer mDescendants;
+    private Integer descendants;
     @SerializedName("id")
-    private Long mId;
+    private Long id;
     @SerializedName("kids")
-    private List<Long> mKids;
+    private List<Long> kids;
     @SerializedName("score")
-    private Integer mScore;
+    private Integer score;
     @SerializedName("text")
-    private String mText;
+    private String text;
     @SerializedName("time")
-    private Long mTime;
+    private Long time;
     @SerializedName("title")
-    private String mTitle;
+    private String title;
     @SerializedName("type")
-    private String mType;
+    private String type;
     @SerializedName("url")
-    private String mUrl;
+    private String url;
     // endregion
 
     // region Getters
 
     public String getBy() {
-        if (TextUtils.isEmpty(mBy))
+        if (TextUtils.isEmpty(by))
             return "";
         else
-            return mBy;
+            return by;
     }
 
     public Integer getDescendants() {
-        if(mDescendants == null)
+        if(descendants == null)
             return -1;
         else
-            return mDescendants;
+            return descendants;
     }
 
     public Long getId() {
-        if(mId == null)
+        if(id == null)
             return -1L;
         else
-            return mId;
+            return id;
     }
 
     public List<Long> getKids() {
-        return mKids;
+        return kids;
     }
 
     public Integer getScore() {
-        if(mScore == null)
+        if(score == null)
             return -1;
         else
-            return mScore;
+            return score;
     }
 
     public String getText() {
-        if (TextUtils.isEmpty(mText))
+        if (TextUtils.isEmpty(text))
             return "";
         else
-            return mText;
+            return text;
     }
 
     public Long getTime() {
-        if(mTime == null)
+        if(time == null)
             return -1L;
         else
-            return mTime;
+            return time;
     }
 
     public String getTitle() {
-        if (TextUtils.isEmpty(mTitle))
+        if (TextUtils.isEmpty(title))
             return "";
         else
-            return mTitle;
+            return title;
     }
 
     public String getType() {
-        if (TextUtils.isEmpty(mType))
+        if (TextUtils.isEmpty(type))
             return "";
         else
-            return mType;
+            return type;
     }
 
     public String getUrl() {
-        if (TextUtils.isEmpty(mUrl))
+        if (TextUtils.isEmpty(url))
             return "";
         else
-            return mUrl;
+            return url;
     }
 
     // endregion
@@ -109,43 +109,43 @@ public final class TopStory {
     // region Setters
 
     public void setBy(String by) {
-        mBy = by;
+        this.by = by;
     }
 
     public void setDescendants(Integer descendants) {
-        mDescendants = descendants;
+        this.descendants = descendants;
     }
 
     public void setId(Long id) {
-        mId = id;
+        this.id = id;
     }
 
     public void setKids(List<Long> kids) {
-        mKids = kids;
+        this.kids = kids;
     }
 
     public void setScore(Integer score) {
-        mScore = score;
+        this.score = score;
     }
 
     public void setText(String text) {
-        mText = text;
+        this.text = text;
     }
 
     public void setTime(Long time) {
-        mTime = time;
+        this.time = time;
     }
 
     public void setTitle(String title) {
-        mTitle = title;
+        this.title = title;
     }
 
     public void setType(String type) {
-        mType = type;
+        this.type = type;
     }
 
     public void setUrl(String url) {
-        mUrl = url;
+        this.url = url;
     }
 
     // endregion
