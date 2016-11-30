@@ -1,12 +1,10 @@
 package com.etiennelawlor.hackernews.utilities;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.content.ContextCompat;
-import android.text.TextUtils;
 import android.text.format.DateUtils;
 
 import com.etiennelawlor.hackernews.R;
