@@ -175,7 +175,6 @@ public class TopStoriesFragment extends BaseFragment implements TopStoriesAdapte
                     @Override
                     public void call(TopStory topStory) {
                         if (!isRefreshing && topStory != null) {
-                            Timber.d("getTopStory : success()");
                             progressBar.setVisibility(View.GONE);
                             topStoriesAdapter.add(topStory);
 
@@ -188,7 +187,8 @@ public class TopStoriesFragment extends BaseFragment implements TopStoriesAdapte
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
-                        Timber.d("getTopStory : failure()");
+                        Timber.e("getTopStory : failure()");
+                        throwable.printStackTrace();
                     }
                 });
     }
