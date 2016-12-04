@@ -19,8 +19,8 @@ import com.etiennelawlor.hackernews.adapters.TopStoriesAdapter;
 import com.etiennelawlor.hackernews.network.HackerNewsService;
 import com.etiennelawlor.hackernews.network.ServiceGenerator;
 import com.etiennelawlor.hackernews.network.models.TopStory;
+import com.etiennelawlor.hackernews.utilities.CustomTabUtility;
 import com.etiennelawlor.hackernews.utilities.FontCache;
-import com.etiennelawlor.hackernews.utilities.HackerNewsUtility;
 import com.etiennelawlor.hackernews.utilities.TrestleUtility;
 
 import java.util.List;
@@ -145,8 +145,7 @@ public class TopStoriesFragment extends BaseFragment implements TopStoriesAdapte
         TopStory topStory = topStoriesAdapter.getItem(position);
         if(topStory != null){
             final String url = topStory.getUrl();
-//            HackerNewsUtility.openWebPage(view.getContext(), url);
-            HackerNewsUtility.openCustomTab(TopStoriesFragment.this.getActivity(), url);
+            CustomTabUtility.openCustomTab(TopStoriesFragment.this.getActivity(), url);
         }
     }
 

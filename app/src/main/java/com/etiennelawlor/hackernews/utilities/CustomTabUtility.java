@@ -5,43 +5,16 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.content.ContextCompat;
-import android.text.format.DateUtils;
 
 import com.etiennelawlor.hackernews.R;
 import com.etiennelawlor.hackernews.customtabs.CustomTabActivityHelper;
 
-import java.util.Calendar;
 
 /**
- * Created by etiennelawlor on 3/21/15.
+ * Created by etiennelawlor on 12/2/16.
  */
-public class HackerNewsUtility {
 
-//    public static void openWebPage(Context context, String url) {
-//        if (!TextUtils.isEmpty(url)) {
-//            Uri webpage = Uri.parse(url);
-//            Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
-//            if (intent.resolveActivity(context.getPackageManager()) != null) {
-//                context.startActivity(intent);
-//            }
-//        }
-//    }
-
-    public static String getRelativeDate(Calendar future) {
-
-        CharSequence relativeTime = DateUtils.getRelativeTimeSpanString(future.getTimeInMillis(), System.currentTimeMillis(),
-                DateUtils.SECOND_IN_MILLIS,
-                DateUtils.FORMAT_NO_NOON);
-
-        String relativeDate;
-        if (relativeTime.toString().equals("0 minutes ago") || relativeTime.toString().equals("in 0 minutes")) {
-            relativeDate = "Just now";
-        } else {
-            relativeDate = relativeTime.toString();
-        }
-
-        return relativeDate;
-    }
+public class CustomTabUtility {
 
     public static void openCustomTab(Activity activity, String url) {
         final CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();

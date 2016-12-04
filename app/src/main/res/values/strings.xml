@@ -4,5 +4,6 @@
     <string name="action_settings">Settings</string>
     <string name="reload">RELOAD</string>
     <string name="check_your_network_connection">Can\'t load data. Check your network connection.</string>
+    <string name="discuss">discuss</string>
 
 </resources>
