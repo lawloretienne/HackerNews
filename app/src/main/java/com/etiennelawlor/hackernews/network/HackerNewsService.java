@@ -13,9 +13,6 @@ public interface HackerNewsService {
 
     String BASE_URL = "https://hacker-news.firebaseio.com/v0/";
 
-//    @Headers("Accept: application/json")
-//    ?print=pretty
-
 //    @GET("/topstories.json")
 //    void getTopStoryIds(Callback<List<Long>> cb);
 
