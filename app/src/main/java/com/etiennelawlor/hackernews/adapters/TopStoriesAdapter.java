@@ -166,7 +166,7 @@ public class TopStoriesAdapter extends BaseAdapter<TopStory> {
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(time * 1000);
-        String date = DateUtility.getDate(calendar);
+        String date = DateUtility.getFormattedTime(calendar, DateUtility.FORMAT_RELATIVE);
 
         String commentCount;
         if (descendants > 0) {
