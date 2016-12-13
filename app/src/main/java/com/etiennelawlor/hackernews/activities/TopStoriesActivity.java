@@ -12,6 +12,7 @@ public class TopStoriesActivity extends AppCompatActivity {
     // region Lifecycle Methods
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.Theme_HackerNews_TopStoriesActivity);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_top_stories);
 

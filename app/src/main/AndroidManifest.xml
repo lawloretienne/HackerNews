@@ -15,15 +15,24 @@
 
         <!-- Activities -->
 
+        <!-- Activities -->
         <activity
             android:name=".activities.TopStoriesActivity"
-            android:screenOrientation="portrait">
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.HackerNews.TopStoriesActivity.Launcher" />
+
+        <!-- use an alias in case we want to change the launch activity later without breaking
+             homescreen shortcuts.  Note must be defined after the targetActivity -->
+        <activity-alias
+            android:name=".Launcher"
+            android:label="@string/app_name"
+            android:targetActivity=".activities.TopStoriesActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
+        </activity-alias>
 
         <!-- Services -->
 

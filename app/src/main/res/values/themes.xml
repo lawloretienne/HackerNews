@@ -46,4 +46,12 @@
 
     <style name="Theme.HackerNews" parent="Base.Theme.HackerNews" />
 
+    <style name="Theme.HackerNews.TopStoriesActivity" parent="Theme.HackerNews">
+        <!--<item name="android:windowTranslucentStatus">true</item>-->
+    </style>
+
+    <style name="Theme.HackerNews.TopStoriesActivity.Launcher" parent="Theme.HackerNews.TopStoriesActivity">
+        <item name="android:windowBackground">@drawable/launch_screen</item>
+    </style>
+
 </resources>

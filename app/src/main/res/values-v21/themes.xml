@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.HackerNews" parent="Base.Theme.HackerNews">
+        <!--<item name="android:windowDrawsSystemBarBackgrounds">true</item>-->
+    </style>
+
+    <style name="Theme.HackerNews.TopStoriesActivity" parent="@style/Theme.HackerNews">
+        <!--<item name="android:windowDrawsSystemBarBackgrounds">true</item>-->
+        <!--<item name="android:statusBarColor">@color/five_percent_transparency_black</item>-->
+    </style>
+
+    <style name="Theme.HackerNews.TopStoriesActivity.Launcher" parent="Theme.HackerNews">
+        <item name="android:windowBackground">@drawable/launch_screen</item>
+    </style>
+
+</resources>
