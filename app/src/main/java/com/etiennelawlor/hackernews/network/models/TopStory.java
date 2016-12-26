@@ -1,9 +1,13 @@
 package com.etiennelawlor.hackernews.network.models;
 
+import android.content.Context;
 import android.text.TextUtils;
 
+import com.etiennelawlor.hackernews.R;
+import com.etiennelawlor.hackernews.utilities.DateUtility;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -16,17 +20,17 @@ public final class TopStory {
     @SerializedName("by")
     private String by;
     @SerializedName("descendants")
-    private Integer descendants;
+    private int descendants;
     @SerializedName("id")
-    private Long id;
+    private long id;
     @SerializedName("kids")
     private List<Long> kids;
     @SerializedName("score")
-    private Integer score;
+    private int score;
     @SerializedName("text")
     private String text;
     @SerializedName("time")
-    private Long time;
+    private long time;
     @SerializedName("title")
     private String title;
     @SerializedName("type")
@@ -44,29 +48,20 @@ public final class TopStory {
             return by;
     }
 
-    public Integer getDescendants() {
-        if(descendants == null)
-            return -1;
-        else
-            return descendants;
+    public int getDescendants() {
+        return descendants;
     }
 
-    public Long getId() {
-        if(id == null)
-            return -1L;
-        else
-            return id;
+    public long getId() {
+        return id;
     }
 
     public List<Long> getKids() {
         return kids;
     }
 
-    public Integer getScore() {
-        if(score == null)
-            return -1;
-        else
-            return score;
+    public int getScore() {
+        return score;
     }
 
     public String getText() {
@@ -76,11 +71,8 @@ public final class TopStory {
             return text;
     }
 
-    public Long getTime() {
-        if(time == null)
-            return -1L;
-        else
-            return time;
+    public long getTime() {
+        return time;
     }
 
     public String getTitle() {
@@ -104,6 +96,23 @@ public final class TopStory {
             return url;
     }
 
+    public String getFormattedDate(){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(time * 1000);
+        String date = DateUtility.getFormattedDateAndTime(calendar, DateUtility.FORMAT_RELATIVE);
+        return date;
+    }
+
+    public String getCommentCount(Context context){
+        String commentCount;
+        if (descendants > 0) {
+            commentCount = context.getResources().getQuantityString(R.plurals.comment_count, descendants, descendants);
+        } else {
+            commentCount = context.getString(R.string.discuss);
+        }
+        return commentCount;
+    }
+
     // endregion
 
     // region Setters
@@ -112,11 +121,11 @@ public final class TopStory {
         this.by = by;
     }
 
-    public void setDescendants(Integer descendants) {
+    public void setDescendants(int descendants) {
         this.descendants = descendants;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -124,7 +133,7 @@ public final class TopStory {
         this.kids = kids;
     }
 
-    public void setScore(Integer score) {
+    public void setScore(int score) {
         this.score = score;
     }
 
@@ -132,7 +141,7 @@ public final class TopStory {
         this.text = text;
     }
 
-    public void setTime(Long time) {
+    public void setTime(long time) {
         this.time = time;
     }
 

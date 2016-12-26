@@ -100,8 +100,7 @@ public class TopStoriesAdapter extends BaseAdapter<TopStory> {
 
         final TopStory topStory = getItem(position);
         if (topStory != null) {
-            setUpTitle(holder.titleTextView, topStory);
-            setUpSubtitle(holder.subTitleTextView, topStory);
+            holder.bind(topStory);
         }
     }
 
@@ -133,53 +132,6 @@ public class TopStoriesAdapter extends BaseAdapter<TopStory> {
         add(new TopStory());
     }
 
-    // region Helper Methods
-    private void setUpTitle(TextView tv, TopStory topStory) {
-        final String url = topStory.getUrl();
-        final String title = topStory.getTitle();
-
-        if (!TextUtils.isEmpty(url)) {
-            Uri uri = Uri.parse(url);
-            String host = uri.getHost();
-
-            List<Span> spans = new ArrayList<>();
-            spans.add(new Span.Builder(title)
-                    .build());
-            spans.add(new Span.Builder(" ")
-                    .build());
-            spans.add(new Span.Builder(String.format("(%s)", host))
-                    .foregroundColor(ContextCompat.getColor(tv.getContext(), R.color.secondary_text))
-                    .relativeSize(0.875f)
-                    .build());
-            tv.setText(Trestle.getFormattedText(spans));
-        } else {
-            if (!TextUtils.isEmpty(title))
-                tv.setText(title);
-        }
-    }
-
-    private void setUpSubtitle(TextView tv, TopStory topStory) {
-        final int score = topStory.getScore();
-        final String by = topStory.getBy();
-        final long time = topStory.getTime();
-        final int descendants = topStory.getDescendants();
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(time * 1000);
-        String date = DateUtility.getFormattedDateAndTime(calendar, DateUtility.FORMAT_RELATIVE);
-
-        String commentCount;
-        if (descendants > 0) {
-            commentCount = tv.getContext().getResources().getQuantityString(R.plurals.comment_count, descendants, descendants);
-        } else {
-            commentCount = tv.getContext().getString(R.string.discuss);
-        }
-
-        tv.setText(String.format("%d points by %s • %s • %s", score, by, date, commentCount));
-    }
-
-    // endregion
-
     // region Inner Classes
 
     public static class TopStoryViewHolder extends RecyclerView.ViewHolder {
@@ -197,6 +149,44 @@ public class TopStoriesAdapter extends BaseAdapter<TopStory> {
             ButterKnife.bind(this, view);
         }
         // endregion
+
+        private void bind(TopStory topStory){
+            setUpTitle(titleTextView, topStory);
+            setUpSubtitle(subTitleTextView, topStory);
+        }
+
+        private void setUpTitle(TextView tv, TopStory topStory) {
+            String url = topStory.getUrl();
+            String title = topStory.getTitle();
+
+            if (!TextUtils.isEmpty(url)) {
+                Uri uri = Uri.parse(url);
+                String host = uri.getHost();
+
+                List<Span> spans = new ArrayList<>();
+                spans.add(new Span.Builder(title)
+                        .build());
+                spans.add(new Span.Builder(" ")
+                        .build());
+                spans.add(new Span.Builder(String.format("(%s)", host))
+                        .foregroundColor(ContextCompat.getColor(tv.getContext(), R.color.secondary_text))
+                        .relativeSize(0.875f)
+                        .build());
+                tv.setText(Trestle.getFormattedText(spans));
+            } else {
+                if (!TextUtils.isEmpty(title))
+                    tv.setText(title);
+            }
+        }
+
+        private void setUpSubtitle(TextView tv, TopStory topStory) {
+            int score = topStory.getScore();
+            String by = topStory.getBy();
+            String date = topStory.getFormattedDate();
+            String commentCount = topStory.getCommentCount(tv.getContext());
+
+            tv.setText(String.format("%d points by %s • %s • %s", score, by, date, commentCount));
+        }
     }
 
     public static class FooterViewHolder extends RecyclerView.ViewHolder {
