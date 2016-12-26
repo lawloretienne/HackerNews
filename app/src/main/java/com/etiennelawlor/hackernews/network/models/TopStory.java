@@ -42,10 +42,7 @@ public final class TopStory {
     // region Getters
 
     public String getBy() {
-        if (TextUtils.isEmpty(by))
-            return "";
-        else
-            return by;
+        return by;
     }
 
     public int getDescendants() {
@@ -65,10 +62,7 @@ public final class TopStory {
     }
 
     public String getText() {
-        if (TextUtils.isEmpty(text))
-            return "";
-        else
-            return text;
+        return text;
     }
 
     public long getTime() {
@@ -76,24 +70,15 @@ public final class TopStory {
     }
 
     public String getTitle() {
-        if (TextUtils.isEmpty(title))
-            return "";
-        else
-            return title;
+        return title;
     }
 
     public String getType() {
-        if (TextUtils.isEmpty(type))
-            return "";
-        else
-            return type;
+        return type;
     }
 
     public String getUrl() {
-        if (TextUtils.isEmpty(url))
-            return "";
-        else
-            return url;
+        return url;
     }
 
     public String getFormattedDate(){
