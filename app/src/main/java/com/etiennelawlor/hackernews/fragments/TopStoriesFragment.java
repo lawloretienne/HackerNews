@@ -12,7 +12,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.etiennelawlor.hackernews.R;
 import com.etiennelawlor.hackernews.adapters.TopStoriesAdapter;
@@ -21,17 +23,22 @@ import com.etiennelawlor.hackernews.network.ServiceGenerator;
 import com.etiennelawlor.hackernews.network.models.TopStory;
 import com.etiennelawlor.hackernews.utilities.CustomTabUtility;
 import com.etiennelawlor.hackernews.utilities.FontCache;
+import com.etiennelawlor.hackernews.utilities.NetworkUtility;
 import com.etiennelawlor.hackernews.utilities.TrestleUtility;
 
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
+import retrofit2.Call;
 import rx.Observable;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
+import rx.subscriptions.CompositeSubscription;
 import timber.log.Timber;
 
 public class TopStoriesFragment extends BaseFragment implements TopStoriesAdapter.OnItemClickListener {
@@ -45,6 +52,12 @@ public class TopStoriesFragment extends BaseFragment implements TopStoriesAdapte
     SwipeRefreshLayout swipeRefreshLayout;
     @Bind(R.id.pb)
     ProgressBar progressBar;
+    @Bind(R.id.error_ll)
+    LinearLayout errorLinearLayout;
+    @Bind(R.id.error_tv)
+    TextView errorTextView;
+    @Bind(android.R.id.empty)
+    LinearLayout emptyLinearLayout;
     // endregion
 
     // region Member Variables
@@ -52,10 +65,20 @@ public class TopStoriesFragment extends BaseFragment implements TopStoriesAdapte
     private boolean isRefreshing = false;
     private long storyIdCount = 0;
     private Typeface font;
+    private CompositeSubscription compositeSubscription;
     private HackerNewsService hackerNewsService;
     // endregion
 
     // region Listeners
+    @OnClick(R.id.reload_btn)
+    public void onReloadButtonClicked() {
+        emptyLinearLayout.setVisibility(View.GONE);
+        errorLinearLayout.setVisibility(View.GONE);
+        progressBar.setVisibility(View.VISIBLE);
+
+        loadTopStories();
+    }
+
     private final SwipeRefreshLayout.OnRefreshListener swipeRefreshLayoutOnRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
         @Override
         public void onRefresh() {
@@ -91,6 +114,8 @@ public class TopStoriesFragment extends BaseFragment implements TopStoriesAdapte
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        compositeSubscription = new CompositeSubscription();
 
         font = FontCache.getTypeface("Lato-Medium.ttf", getContext());
 
@@ -132,6 +157,13 @@ public class TopStoriesFragment extends BaseFragment implements TopStoriesAdapte
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        compositeSubscription.unsubscribe();
+    }
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
@@ -153,7 +185,7 @@ public class TopStoriesFragment extends BaseFragment implements TopStoriesAdapte
 
     // region Helper Methods
     private void loadTopStories() {
-        hackerNewsService.getTopStoryIds()
+        Subscription loadTopStoriesSubscription = hackerNewsService.getTopStoryIds()
                 .concatMap(new Func1<List<Long>, Observable<?>>() {
                     @Override
                     public Observable<?> call(List<Long> storyIds) {
@@ -187,14 +219,19 @@ public class TopStoriesFragment extends BaseFragment implements TopStoriesAdapte
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
-                        Timber.e("getTopStory : failure()");
                         throwable.printStackTrace();
+                        progressBar.setVisibility(View.GONE);
+                        if (NetworkUtility.isKnownException(throwable)) {
+                            errorTextView.setText("Can't load data.\nCheck your network connection.");
+                            errorLinearLayout.setVisibility(View.VISIBLE);
+                        }
                     }
                 });
+        compositeSubscription.add(loadTopStoriesSubscription);
     }
 
     private void reloadTopStories() {
-        hackerNewsService.getTopStoryIds()
+        Subscription reloadTopStoriesSubscription = hackerNewsService.getTopStoryIds()
                 .concatMap(new Func1<List<Long>, Observable<?>>() {
                     @Override
                     public Observable<?> call(List<Long> storyIds) {
@@ -229,9 +266,14 @@ public class TopStoriesFragment extends BaseFragment implements TopStoriesAdapte
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
-                        Timber.d("getTopStory : failure()");
+                        throwable.printStackTrace();
+                        if (NetworkUtility.isKnownException(throwable)) {
+//                            errorTextView.setText("Can't load data.\nCheck your network connection.");
+//                            errorLinearLayout.setVisibility(View.VISIBLE);
+                        }
                     }
                 });
+        compositeSubscription.add(reloadTopStoriesSubscription);
     }
     // endregion
 }

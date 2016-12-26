@@ -169,7 +169,7 @@ public class TopStoriesAdapter extends BaseAdapter<TopStory> {
                 spans.add(new Span.Builder(" ")
                         .build());
                 spans.add(new Span.Builder(String.format("(%s)", host))
-                        .foregroundColor(ContextCompat.getColor(tv.getContext(), R.color.secondary_text))
+                        .foregroundColor(ContextCompat.getColor(tv.getContext(), R.color.secondary_text_dark))
                         .relativeSize(0.875f)
                         .build());
                 tv.setText(Trestle.getFormattedText(spans));

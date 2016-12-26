@@ -3,6 +3,6 @@
 
     <color name="primary">#f26522</color>
     <color name="primary_dark">#d94d0d</color>
-    <color name="accent">@color/lime_500</color>
+    <color name="accent">@color/lime_A400</color>
 
 </resources>
