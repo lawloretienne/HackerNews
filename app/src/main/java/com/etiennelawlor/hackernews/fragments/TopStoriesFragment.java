@@ -28,10 +28,10 @@ import com.etiennelawlor.hackernews.utilities.TrestleUtility;
 
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import retrofit2.Call;
+import butterknife.Unbinder;
 import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -44,19 +44,19 @@ import timber.log.Timber;
 public class TopStoriesFragment extends BaseFragment implements TopStoriesAdapter.OnItemClickListener {
 
     // region Views
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @Bind(R.id.rv)
+    @BindView(R.id.rv)
     RecyclerView recyclerView;
-    @Bind(R.id.swipe_refresh_layout)
+    @BindView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout swipeRefreshLayout;
-    @Bind(R.id.pb)
+    @BindView(R.id.pb)
     ProgressBar progressBar;
-    @Bind(R.id.error_ll)
+    @BindView(R.id.error_ll)
     LinearLayout errorLinearLayout;
-    @Bind(R.id.error_tv)
+    @BindView(R.id.error_tv)
     TextView errorTextView;
-    @Bind(android.R.id.empty)
+    @BindView(android.R.id.empty)
     LinearLayout emptyLinearLayout;
     // endregion
 
@@ -65,6 +65,7 @@ public class TopStoriesFragment extends BaseFragment implements TopStoriesAdapte
     private boolean isRefreshing = false;
     private long storyIdCount = 0;
     private Typeface font;
+    private Unbinder unbinder;
     private CompositeSubscription compositeSubscription;
     private HackerNewsService hackerNewsService;
     // endregion
@@ -128,7 +129,7 @@ public class TopStoriesFragment extends BaseFragment implements TopStoriesAdapte
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_top_stories, container, false);
-        ButterKnife.bind(this, view);
+        unbinder = ButterKnife.bind(this, view);
 
         return view;
     }
@@ -166,7 +167,7 @@ public class TopStoriesFragment extends BaseFragment implements TopStoriesAdapte
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.unbind(this);
+        unbinder.unbind();
     }
     // endregion
 

@@ -1,7 +1,6 @@
 package com.etiennelawlor.hackernews.network.models;
 
 import android.content.Context;
-import android.text.TextUtils;
 
 import com.etiennelawlor.hackernews.R;
 import com.etiennelawlor.hackernews.utilities.DateUtility;

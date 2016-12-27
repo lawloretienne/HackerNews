@@ -15,15 +15,13 @@ import android.widget.TextView;
 
 import com.etiennelawlor.hackernews.R;
 import com.etiennelawlor.hackernews.network.models.TopStory;
-import com.etiennelawlor.hackernews.utilities.DateUtility;
 import com.etiennelawlor.trestle.library.Span;
 import com.etiennelawlor.trestle.library.Trestle;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -137,9 +135,9 @@ public class TopStoriesAdapter extends BaseAdapter<TopStory> {
     public static class TopStoryViewHolder extends RecyclerView.ViewHolder {
 
         // region Views
-        @Bind(R.id.title_tv)
+        @BindView(R.id.title_tv)
         TextView titleTextView;
-        @Bind(R.id.subtitle_tv)
+        @BindView(R.id.subtitle_tv)
         TextView subTitleTextView;
         // endregion
 
@@ -193,13 +191,13 @@ public class TopStoriesAdapter extends BaseAdapter<TopStory> {
 
     public static class FooterViewHolder extends RecyclerView.ViewHolder {
         // region Views
-        @Bind(R.id.loading_fl)
+        @BindView(R.id.loading_fl)
         FrameLayout loadingFrameLayout;
-        @Bind(R.id.error_rl)
+        @BindView(R.id.error_rl)
         RelativeLayout errorRelativeLayout;
-        @Bind(R.id.pb)
+        @BindView(R.id.pb)
         ProgressBar progressBar;
-        @Bind(R.id.reload_btn)
+        @BindView(R.id.reload_btn)
         Button reloadButton;
         // endregion
 
