@@ -150,6 +150,7 @@ public class TopStoriesAdapter extends BaseAdapter<TopStory> {
         }
         // endregion
 
+        // region Helper Methods
         private void bind(TopStory topStory){
             setUpTitle(titleTextView, topStory);
             setUpSubtitle(subTitleTextView, topStory);
@@ -187,6 +188,7 @@ public class TopStoriesAdapter extends BaseAdapter<TopStory> {
 
             tv.setText(String.format("%d points by %s • %s • %s", score, by, date, commentCount));
         }
+        // endregion
     }
 
     public static class FooterViewHolder extends RecyclerView.ViewHolder {
